@@ -42,11 +42,10 @@ LANGUAGE plpgsql
  AS $$
 BEGIN
   RAISE EXCEPTION 'Erreur: La modification est bloquée par la politique.';
-  RETURN NULL;
 END; $$;
 
-DROP EVENT TRIGGER IF EXISTS block_update_table;
-CREATE EVENT TRIGGER _block_update_table
+DROP EVENT TRIGGER IF EXISTS tr_block_update_table;
+CREATE EVENT TRIGGER tr_block_update_table
 ON ddl_command_start
 WHEN TAG IN ('ALTER TABLE')
 EXECUTE FUNCTION block_update_table();
@@ -57,7 +56,6 @@ RETURNS event_trigger
 LANGUAGE plpgsql 
 AS $$
 BEGIN
-IF tg_tag = 'DROP TABLE' THEN
   RAISE EXCEPTION 'Erreur: La suppression est bloquée par la politique.';
 END; $$;
 
