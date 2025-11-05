@@ -1,4 +1,4 @@
-        ROLLBACK;
+ROLLBACK;
 
         DO $$
         DECLARE
@@ -8,6 +8,7 @@
         dept_fr_id INT;
         prof_id INT := 1;
         course_id INT :=1;
+        note NUMERIC;
         BEGIN 
         INSERT INTO departement(name) VALUES ('Informatique') returning departement_id INTO dept_info_id;
         INSERT INTO departement(name) VALUES ('Mathématique') returning departement_id INTO dept_math_id;
@@ -15,19 +16,26 @@
 
         --créer 10 prof
         FOR i IN 1..10 LOOP
-        INSERT INTO prof(firstname,lastname) VALUES ('Prof'||i, 'Nom'|| i);
+        INSERT INTO prof(firstname,lastname) VALUES ('Prof'||i, 'Nom'||i);
         END LOOP;
 
         --créer 100 cours
-        FOR i in 1..100 LOOP
-        INSERT INTO course(title,sigle) VALUES(
-            CASE WHEN i <= 33 THEN 'Info'||i
-            WHEN i <= 66 THEN 'Math'||i
-            ELSE 'Fr' ||i
-            END,
-            'SIG'||i
-        );
-        END LOOP;
+        FOR i IN 1..100 LOOP
+  INSERT INTO course(title, sigle, departement_id) VALUES(
+    CASE 
+      WHEN i <= 33 THEN 'Info' || i
+      WHEN i <= 66 THEN 'Math' || i
+      ELSE 'Fr'||  i
+    END,
+    'SIG' || i,
+    CASE 
+      WHEN i <= 33 THEN dept_info_id
+      WHEN i <= 66 THEN dept_math_id
+      ELSE dept_fr_id
+    END
+  );
+END LOOP;
+
 
         -- créer 150 etudiant
         FOR i IN 1..150 LOOP
@@ -46,8 +54,8 @@
         --1 étudiant a 8 cours
         FOR student_id IN 1..150 LOOP
         FOR course_id IN 1..8 LOOP
-        INSERT INTO student_course(student_id,course_id)
-        VALUES(student_id,course_id);
+        INSERT INTO student_course(student_id,course_id,grade)
+        VALUES(student_id,course_id,FLOOR( 50 + RANDOM()*51));
         END LOOP;
         END LOOP;
 
@@ -62,8 +70,3 @@
         END LOOP;
 
         END $$;
-
-
-
-        
-    

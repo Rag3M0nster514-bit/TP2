@@ -13,7 +13,9 @@ DROP TABLE if EXISTS course CASCADE;
 CREATE TABLE course(
     course_id SERIAL PRIMARY KEY,
     title VARCHAR(50) NOT NULL,
-    sigle VARCHAR (15) 
+    sigle VARCHAR (15) UNIQUE,
+    departement_id INT,  --  on déclare d’abord la colonne
+    FOREIGN KEY (departement_id) REFERENCES departement(departement_id)  --  puis on crée la contrainte
 );
 DROP TABLE if EXISTS prof CASCADE;
 CREATE TABLE prof(

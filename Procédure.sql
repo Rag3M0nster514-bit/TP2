@@ -16,12 +16,14 @@ IF NOT EXISTS(
 RAISE EXCEPTION 'ERREUR : étudiant ID % est introuvable.', p_student_id;
 END IF;
 
-
+--vérification du cours
 IF NOT EXISTS(
     SELECT 1 FROM course WHERE course_id = p_course_id
 )THEN
 Raise EXCEPTION 'ERREUR : cours ID % est introuvable.', p_course_id;
 END IF;
+
+--vérification du département
 IF NOT EXISTS(
     SELECT 1 FROM departement WHERE departement_id = p_departement_id
 )THEN
@@ -79,3 +81,18 @@ ON CONFLICT DO NOTHING;
 
 END;
 $$;
+
+-- Exemple d’appel : assigner un étudiant à un cours et un département ou que l'étudiant n'existe pas 
+CALL student_to_course_and_departement(999, 101, 10);
+
+-- Exemple d’appel : assigner un étudiant à un cours et un département ou que le cours  n'existe pas
+CALL student_to_course_and_departement(1, 999, 10);
+-- Exemple d’appel : assigner un étudiant à un cours et un département ou que le département n'existe pas
+CALL student_to_course_and_departement(1, 8, 999);
+
+
+-- Exemple d’appel : transférer les étudiants ayant réussi vers un nouveau cours
+CALL update_student_course_on_grade(999, 2);
+
+--Exemple d’appel : transférer les étudiants ayant réussi vers un nouveau cours qui n'existe pas
+CALL update_student_course_on_grade(1, 999); 

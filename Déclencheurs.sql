@@ -1,3 +1,5 @@
+
+
 --Fonction pour valider
 CREATE OR REPLACE FUNCTION tg_student_id_inchanger()
 RETURNS trigger
@@ -35,7 +37,7 @@ ON ddl_command_start
 WHEN TAG IN ('CREATE TABLE')
 EXECUTE FUNCTION block_create_table();
 
--- update TABLE
+-- empêche  d'update TABLE
 CREATE OR REPLACE FUNCTION block_update_table()
 RETURNS event_trigger
 LANGUAGE plpgsql
@@ -50,7 +52,7 @@ ON ddl_command_start
 WHEN TAG IN ('ALTER TABLE')
 EXECUTE FUNCTION block_update_table();
 
--- suppresion TABLE
+--empêche la suppresion TABLE
 CREATE OR REPLACE FUNCTION et_block_drop_table()
 RETURNS event_trigger
 LANGUAGE plpgsql 
@@ -59,7 +61,7 @@ BEGIN
   RAISE EXCEPTION 'Erreur: La suppression est bloquée par la politique.';
 END; $$;
 
-DROP EVENT TRIGGER IF EXISTS et_block_drop_table;
+DROP EVENT TRIGGER IF EXISTS tr_block_drop_table;
 CREATE EVENT TRIGGER tr_block_drop_table
 ON ddl_command_start
 WHEN TAG IN ('DROP TABLE')
@@ -124,3 +126,8 @@ CREATE TRIGGER tr_grade_non_negative
 BEFORE INSERT OR UPDATE ON student_course
 FOR EACH ROW
 EXECUTE FUNCTION valider_grade_non_negative();
+
+--si on veut desactivers les triggers
+ALTER EVENT TRIGGER tr_block_update_table DISABLE;
+ALTER EVENT TRIGGER tr_block_drop_table DISABLE;
+ALTER EVENT TRIGGER et_block_create_table DISABLE;

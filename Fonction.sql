@@ -67,3 +67,15 @@ JOIN course c ON pc.course_id = c.course_id
 WHERE c.departement_id = p_departement_id GROUP BY p.prof_id, p.firstname,p.lastname;
 END;
 $$;
+
+--Erreur : prof ID introuvable
+ELECT note_moyenne_de_prof_par_cours(999, 101);
+
+--Erreur : course ID introuvable
+SELECT note_moyenne_de_prof_par_cours(1, 999);
+
+--Erreur : cours non assigné au prof
+SELECT note_moyenne_de_prof_par_cours(1, 102); -- 102 existe mais n’est pas lié au prof 1
+
+--Erreur : département ID introuvable
+SELECT * FROM prof_course_count_by_departement(999);
